@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:insert="fragments/general.html :: bootstrapcss">
+    <title>Librarian profile page</title>
+</head>
+<body>
+<header th:insert="fragments/general.html :: header"></header>
+<h1>Hello <span th:text="${username}"></span></h1>
+</body>
+</html>
