@@ -3,12 +3,10 @@ package com.controllers;
 import com.models.User;
 import com.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +16,12 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     private final UserService userService;
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void PasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Autowired
     public UserController(UserService userService) {
@@ -30,34 +34,26 @@ public class UserController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String validateUser(@ModelAttribute("user") User user, Model model, HttpServletRequest request) {
-        User validatedUser = userService.validateUser(user.getUsername(), user.getPassword());
-        HttpSession session = request.getSession();
-        if (validatedUser == null) {
-            model.addAttribute("message", "User not found!");
-            return "login";
-        } else {
-            session.setAttribute("user", user.getUsername());
-            session.setMaxInactiveInterval(-1);
-            if (validatedUser.getRole().getName().equals("ROLE_LIBRARIAN")) {
-                model.addAttribute("username", session.getAttribute("user"));
-                return "librarian_profile";
-            }
-            if (validatedUser.getRole().getName().equals("ROLE_STUDENT")) return "student_profile";
-        }
-        return "redirect:/login";
-    }
-
     @GetMapping("/register")
     public String register() {
         return "register";
     }
 
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        session.invalidate();
-        return "redirect:/user/login";
+    @PostMapping("/register")
+    public String addUser(User user, @RequestParam("username") String username, Model model) {
+        if (userService.validateUser(username) != null) {
+            model.addAttribute("message", "User exists!");
+            return "register";
+        } else {
+            user.setUsername(username);
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userService.addUser(user);
+            return "redirect:/user/login";
+        }
+    }
+
+    @GetMapping("/profile/librarian")
+    public String librarianProfile() {
+        return "librarian_profile";
     }
 }

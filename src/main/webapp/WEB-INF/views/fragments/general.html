@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <link th:fragment="bootstrapcss" rel="stylesheet"
@@ -17,16 +17,14 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
+            <li sec:authorize="!isAuthenticated()" class="nav-item">
                 <a class="nav-link" href="/user/login">Login</a>
             </li>
-            <li class="nav-item">
+            <li sec:authorize="hasRole('ROLE_LIBRARIAN')" class="nav-item">
                 <a class="nav-link" href="/user/register">Register</a>
             </li>
-            <li class="nav-item">
-                <form th:action="@{/user/logout}" th:method="POST">
-                    <button class="nav-link" type="submit">Logout</button>
-                </form>
+            <li sec:authorize="isAuthenticated()" class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
             </li>
         </ul>
     </div>

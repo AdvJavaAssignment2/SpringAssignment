@@ -23,7 +23,7 @@ public class UserRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    public User findByUserName(String username, String password) {
+    public User findByUserName(String username) {
         Session session = sessionFactory.openSession();
         session.beginTransaction();
         User user;
@@ -32,8 +32,7 @@ public class UserRepository {
             CriteriaQuery<User> q1 = builder1.createQuery(User.class);
             Root<User> root1 = q1.from(User.class);
             Predicate predicateUsername = builder1.equal(root1.get("username"), username);
-            Predicate predicatePassword = builder1.equal(root1.get("password"), password);
-            user = session.createQuery(q1.where(predicateUsername).where(predicatePassword)).getSingleResult();
+            user = session.createQuery(q1.where(predicateUsername)).getSingleResult();
         } catch (NoResultException noResultException) {
             user = null;
         } finally {

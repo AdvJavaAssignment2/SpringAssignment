@@ -7,6 +7,8 @@
 </head>
 <body>
 <header th:insert="fragments/general.html :: header"></header>
-<h1>Hello <span th:text="${username}"></span></h1>
+<h1>Hello <span th:text="${#authorization.getAuthentication().getName().toUpperCase()}"></span></h1>
+
+
 </body>
 </html>

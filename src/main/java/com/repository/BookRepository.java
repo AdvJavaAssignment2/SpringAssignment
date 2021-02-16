@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 public class BookRepository {
 
     private final SessionFactory sessionFactory;
+    Session session;
 
     @Autowired
     public BookRepository(SessionFactory sessionFactory) {
@@ -40,5 +42,57 @@ public class BookRepository {
             session.close();
         }
         return null;
+    }
+
+    public Book getBook(long id) {
+        session = sessionFactory.openSession();
+        session.beginTransaction();
+        Book book;
+        try {
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+            CriteriaQuery<Book> q1 = builder.createQuery(Book.class);
+            Root<Book> root = q1.from(Book.class);
+
+            Predicate predicateBook = builder.equal(root.get("id"), id);
+            book = session.createQuery(q1.where(predicateBook)).getSingleResult();
+            session.getTransaction().commit();
+        } finally {
+            session.close();
+        }
+        return book;
+    }
+
+    public void addBook(Book book) {
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.persist(book);
+            session.getTransaction().commit();
+        } finally {
+            session.close();
+        }
+    }
+
+    public void updateBook(Book book) {
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            session.merge(book);
+            session.getTransaction().commit();
+        } finally {
+            session.close();
+        }
+    }
+
+    public void deleteBook(long bookId) {
+        try {
+            session = sessionFactory.openSession();
+            session.beginTransaction();
+            Book book = session.find(Book.class, bookId);
+            session.remove(book);
+            session.getTransaction().commit();
+        } finally {
+            session.close();
+        }
     }
 }

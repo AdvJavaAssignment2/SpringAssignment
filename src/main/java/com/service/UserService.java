@@ -15,7 +15,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User validateUser(String username, String password) {
-        return userRepository.findByUserName(username, password);
+    public User validateUser(String username) {
+        return userRepository.findByUserName(username);
+    }
+
+    public void addUser(User user) {
+        userRepository.addUser(user);
     }
 }
