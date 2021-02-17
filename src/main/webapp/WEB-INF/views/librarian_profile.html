@@ -7,8 +7,62 @@
 </head>
 <body>
 <header th:insert="fragments/general.html :: header"></header>
-<h1>Hello <span th:text="${#authorization.getAuthentication().getName().toUpperCase()}"></span></h1>
-
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6">
+            <h2 class="h2">Students</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="student,index:${students}">
+                    <th scope="row" th:text="${index.index + 1}"></th>
+                    <td>
+                        <a th:href="@{/user/update/{username}(username=${student.getUsername()})}" th:text="${student.getUsername()}"></a>
+                    </td>
+                    <td>
+                        <a th:if="${student.getEvent() == 'deleted'}" th:href="@{/user/restore/{username}(username=${student.getUsername()})}">restore</a>
+                        <a th:if="${student.getEvent() != 'deleted'}" th:href="@{/user/delete/{username}(username=${student.getUsername()})}">delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-6">
+            <h2 class="h2">Books</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Copies</th>
+                    <th scope="col">Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book,index:${books}">
+                    <th scope="row" th:text="${index.index + 1}"></th>
+                    <td>
+                        <a th:href="@{/book/update/{id}(id=${book.getId()})}" th:text="${book.getName()}"></a>
+                    </td>
+                    <td th:text="${book.getAuthor()}"></td>
+                    <td th:text="${book.getCount()}"></td>
+                    <td>
+                        <a th:if="${book.getEvent() == 'deleted'}" th:href="@{/book/restore/{id}(id=${book.getId()})}">restore</a>
+                        <a th:if="${book.getEvent() != 'deleted'}" th:href="@{/book/delete/{id}(id=${book.getId()})}">delete</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 </body>
 </html>

@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <link th:insert="fragments/general.html :: bootstrapcss">
     <title>Student profile page</title>
 </head>
 <body>
-<h1>Hello Student!</h1>
+<header th:insert="fragments/general.html :: header"></header>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col">
+            <h1>Hello <span th:text="${#authorization.getAuthentication().getName().toUpperCase()}"></span></h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Author</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book,index:${books}">
+                    <th scope="row" th:text="${index.index + 1}"></th>
+                    <td th:text="${book.getName()}"></td>
+                    <td th:text="${book.getAuthor()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>

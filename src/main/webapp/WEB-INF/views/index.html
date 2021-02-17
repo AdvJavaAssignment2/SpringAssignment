@@ -9,9 +9,8 @@
     <header th:insert="fragments/general.html :: header"></header>
 
     <div class="container-fluid pt-5">
-        <p th:text="${error}"></p>
         <div class="row">
-            <div class="col-6">
+            <div class="col">
                 <table class="table">
                     <thead class="thead-dark">
                     <tr>
@@ -29,7 +28,8 @@
                         <td th:text="${book.getAuthor()}"></td>
                         <td sec:authorize="hasRole('ROLE_LIBRARIAN')" th:text="${book.getCount()}"></td>
                         <td sec:authorize="hasRole('ROLE_STUDENT')">
-                            <a th:href="@{/books/borrow/{id}(id=${book.getId()})}" class="btn btn-link">+</a>
+                            <a th:if="${book.getCount()} > 0" th:href="@{/borrow/{id}(id=${book.getId()})}" class="btn btn-link">+</a>
+                            <span th:if="${book.getCount()} == 0">out of stock</span>
                         </td>
                     </tr>
                     </tbody>

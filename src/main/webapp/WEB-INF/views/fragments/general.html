@@ -21,10 +21,16 @@
                 <a class="nav-link" href="/user/login">Login</a>
             </li>
             <li sec:authorize="hasRole('ROLE_LIBRARIAN')" class="nav-item">
-                <a class="nav-link" href="/user/register">Register</a>
+                <a class="nav-link" href="/user/register">Add</a>
             </li>
             <li sec:authorize="isAuthenticated()" class="nav-item">
                 <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            <li sec:authorize="hasRole('ROLE_STUDENT')" class="nav-item">
+                <a class="nav-link" href="/user/profile/student">Profile</a>
+            </li>
+            <li sec:authorize="hasRole('ROLE_LIBRARIAN')" class="nav-item">
+                <a class="nav-link" href="/user/profile/librarian">Profile</a>
             </li>
         </ul>
     </div>

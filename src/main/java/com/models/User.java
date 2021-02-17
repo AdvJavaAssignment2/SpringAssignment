@@ -2,6 +2,8 @@ package com.models;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "UserEntity")
 @Table(name = "users")
@@ -19,7 +21,15 @@ public class User implements Serializable {
     @JoinColumn(name = "role_id")
     private Role role;
     @Column(name = "user_event")
-    private String event;
+    private String event = "restored";
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "borrowed_books",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = {@JoinColumn(name = "book_id")}
+    )
+    private Set<Book> borrowedBooks = new HashSet<>();
 
     public long getId() {
         return this.id;
@@ -59,5 +69,29 @@ public class User implements Serializable {
 
     public void setEvent(String event) {
         this.event = event;
+    }
+
+    public Set<Book> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    public void setBorrowedBooks(Set<Book> borrowedBooks) {
+        this.borrowedBooks = borrowedBooks;
+    }
+
+    public boolean check(Book book) {
+        for (Book book1 : borrowedBooks) {
+            if (book1.getId() == book.getId())
+                return false;
+        }
+        return true;
+    }
+
+    public Book findBorrowedBook(Long id) {
+        for (Book book : borrowedBooks) {
+            if (book.getId() == id)
+                return book;
+        }
+        return null;
     }
 }

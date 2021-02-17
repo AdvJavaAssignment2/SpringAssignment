@@ -68,4 +68,9 @@ public class Book implements Serializable {
     public void setEvent(String event) {
         this.event = event;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return ((Book) obj).getId() == id;
+    }
 }

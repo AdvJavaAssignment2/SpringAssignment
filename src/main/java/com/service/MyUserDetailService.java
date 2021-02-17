@@ -20,8 +20,17 @@ import java.util.Set;
 @Service("myUserDetailsService")
 public class MyUserDetailService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
 
+    private UserRepository userRepository;
+
+    public User getUser() {
+        return user;
+    }
+
+    User user;
     @Autowired
     public MyUserDetailService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -30,8 +39,9 @@ public class MyUserDetailService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUserName(username);
+        user = userRepository.findByUserName(username);
         Role role = user.getRole();
+        String status = user.getEvent();
         Set<Authority> authorities = role.getAuthorities();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
 
@@ -43,7 +53,9 @@ public class MyUserDetailService implements UserDetailsService {
         GrantedAuthority roleAuthority = new SimpleGrantedAuthority(role.getName());
         grantedAuthorities.add(roleAuthority);
 
-        return buildUserForAuthentication(user, grantedAuthorities);
+        if (!status.equals("deleted") || status.equals(null))
+            return buildUserForAuthentication(user, grantedAuthorities);
+        return buildUserForAuthentication(null,null);
     }
 
     private org.springframework.security.core.userdetails.User buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {

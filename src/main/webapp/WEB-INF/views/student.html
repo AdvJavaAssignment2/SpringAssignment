@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:insert="fragments/general.html :: bootstrapcss">
+    <title>Student</title>
+</head>
+<body>
+<header th:insert="fragments/general.html :: header"></header>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-3">
+            <h2 class="h2">Student data</h2>
+            <form th:action="@{/user/update}" th:method="PATCH" th:object="${user}">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" th:field="*{username}">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}">
+                </div>
+                <input type="hidden" name="oldUsername" th:value="${user.getUsername()}">
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+        </div>
+        <div class="col-6 offset-3">
+            <h2 class="h2">Borrowed books</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">Return</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book,index:${borrowedBooks}">
+                    <th scope="row" th:text="${index.index + 1}"></th>
+                    <td th:text="${book.getName()}"></td>
+                    <td th:text="${book.getAuthor()}"></td>
+                    <td>
+                        <a th:href="@{/user/return/{bookId}/{username}(bookId=${book.getId()},username=${user.getUsername()})}" class="btn btn-link">-</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6 offset-6">
+            <form th:action="@{/user/borrow/{username}(username=${user.getUsername()})}" th:method="POST">
+                <select class="custom-select" name="addBook">
+                    <option selected>View all available books</option>
+                    <option th:each="book:${allBooks}" th:value="${book.getId()}" th:text="${book.getName()}"></option>
+                </select>
+                <button type="submit" class="btn btn-success">Add</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

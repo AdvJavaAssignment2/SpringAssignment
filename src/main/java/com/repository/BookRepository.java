@@ -66,6 +66,7 @@ public class BookRepository {
         try {
             session = sessionFactory.openSession();
             session.beginTransaction();
+            book.setEvent("restored");
             session.persist(book);
             session.getTransaction().commit();
         } finally {
@@ -84,12 +85,12 @@ public class BookRepository {
         }
     }
 
-    public void deleteBook(long bookId) {
+    public void deleteBook(Book book) {
         try {
             session = sessionFactory.openSession();
             session.beginTransaction();
-            Book book = session.find(Book.class, bookId);
-            session.remove(book);
+            book.setEvent("deleted");
+            session.merge(book);
             session.getTransaction().commit();
         } finally {
             session.close();

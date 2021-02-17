@@ -28,8 +28,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity security) throws Exception {
         security.authorizeRequests()
-                .antMatchers("/", "/user/register", "/user/logout").permitAll()
-                .antMatchers("/user/profile/librarian").hasRole("LIBRARIAN")
+                .antMatchers("/", "/user/logout").permitAll()
+                .antMatchers("/user/profile/librarian", "/user/update/**", "/user/delete/**", "/user/restore/**", "/user/register", "/user/return/**", "/book/**").hasRole("LIBRARIAN")
+                .antMatchers("/user/borrow/**", "/user/profile/student").hasRole("STUDENT")
                 .and()
                 .formLogin().loginPage("/user/login").permitAll()
                 .and()
